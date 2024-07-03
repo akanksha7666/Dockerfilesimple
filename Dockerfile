@@ -1,13 +1,19 @@
-FROM Ubuntu:latest
-LABEL devops="Akanksha"
-RUN apt-get update 
-RUN apt-get install -y apache2 
-RUN apt-get install -y unzip
-RUN rm -rf /var/www/html/index.html
-WORKDIR /var/www/html
-ADD https://www.free-css.com/assets/files/free-css-templates/download/page293/photosec.zip /var/www/html
-RUN unzip photosec.zip
-WORKDIR /var/www/html
-RUN mv photosec.html/* . 
+FROM ubuntu
+
+# Install necessary packages
+RUN apt-get update && apt-get install -y apache2 wget unzip
+
+# Download the template
+RUN wget -O /var/www/html/oxer.zip https://www.free-css.com/assets/files/free-css-templates/download/page296/oxer.zip
+
+# Change to the web root directory and unzip the template
+WORKDIR /var/www/html/
+RUN unzip oxer.zip && \
+    mv oxer-html/* . && \
+    rm -rvf oxer-html oxer.zip
+
+# Expose port 80
 EXPOSE 80
-CMD [ "apache2ctl","-D","FOREGROUND" ]
+
+# Start Apache in the foreground
+CMD ["apachectl", "-D", "FOREGROUND"]
